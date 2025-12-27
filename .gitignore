@@ -1,2 +1,28 @@
+# Nix build results
 result
-.direnv/
+result-*
+
+# Secrets - IMPORTANT: Only commit encrypted secrets!
+# Unencrypted secrets should never be committed
+hosts/*/secrets.yaml.dec
+*.key
+*.pem
+
+# SOPS/Age keys - NEVER commit these!
+key.txt
+.age-key.txt
+
+# Note: .age files (encrypted secrets) SHOULD be committed
+# They are encrypted and safe to store in git
+
+# Template files with plaintext secrets
+*.template
+
+# Environment files with plaintext secrets
+.env
+
+# Temporary files
+*~
+*.swp
+*.swo
+.DS_Store

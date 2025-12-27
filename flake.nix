@@ -8,14 +8,20 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, deploy-rs, ... }: {
+  outputs = { self, nixpkgs, deploy-rs, agenix, ... }: {
     nixosConfigurations = {
       rmbp = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./hosts/rmbp/configuration.nix
+          agenix.nixosModules.default
         ];
       };
     };
