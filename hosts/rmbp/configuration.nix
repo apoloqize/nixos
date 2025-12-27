@@ -56,6 +56,7 @@
     # SSH public key for passwordless deployment from macOS
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEHwykfjMLx0it7ouJyiNunstkPyFIMj3mKayeLNOHHM florent@Florents-Mac-mini.local"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGBhxu0V7FQqzVp19RWF7UcSKWhAC24iv2kBWskqBTFk florent@Florents-MacBook-Pro.local"
     ];
   };
 
@@ -76,6 +77,15 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
+
+  # Laptop settings
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
+    HandleLidSwitchDocked = "ignore";
+  };
+  services.thermald.enable = true;
+  services.tlp.enable = true;
 
   # List services that you want to enable:
 
