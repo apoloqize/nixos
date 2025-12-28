@@ -23,12 +23,21 @@
         owner = "root";
         group = "root";
       };
+      
+      # OpenRouter API key
+      openrouterApiKey = {
+        reference = "op://nixos/OpenRouter/api-key";
+        path = "/run/secrets/openrouter-api-key";
+        mode = "0400";
+        owner = "root";
+        group = "root";
+      };
     };
     
-    # Automatically restart Tailscale when secrets change
+    # Automatically restart services when secrets change
     systemdIntegration = {
       enable = true;
-      services = [ "tailscaled" ];
+      services = [ "tailscaled" "open-webui" ];
       restartOnChange = true;
     };
   };

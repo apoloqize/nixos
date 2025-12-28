@@ -109,6 +109,20 @@
     '';
     serviceConfig.Type = pkgs.lib.mkForce "oneshot";
   };
+
+  # Open Webui
+
+  services.open-webui = {
+      enable = true;
+      host = "0.0.0.0";
+      environment = {
+        WEBUI_AUTH = "False";
+        OPENAI_API_BASE_URL = "https://openrouter.ai/api/v1";
+        OPENAI_API_KEY = "$(cat ${config.services.onepassword-secrets.secretPaths.openrouterApiKey})";
+        TASK_MODEL_EXTERNAL = "google/gemini-3-flash-preview";
+      };
+  };
+
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
