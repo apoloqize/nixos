@@ -8,6 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./secrets.nix
     ];
 
   # Bootloader.
@@ -87,40 +88,23 @@
   services.thermald.enable = true;
   services.tlp.enable = true;
 
-  # Agenix secrets configuration
-  age = {
-    secrets = {
-      tailscale-authkey = {
-        file = ../../hosts/rmbp/tailscale-authkey.age;
-        mode = "0400";
-        owner = "root";
-      };
-      tailscale-login-server = {
-        file = ../../hosts/rmbp/tailscale-login-server.age;
-        mode = "0400";
-        owner = "root";
-      };
-    };
-    identityPaths = [ "/var/lib/sops-nix/key.txt" ];
-  };
-
-  # Tailscale with encrypted secrets
+  # Tailscale with OpNix-managed secrets
   services.tailscale = {
     enable = true;
-    authKeyFile = config.age.secrets.tailscale-authkey.path;
+    authKeyFile = config.services.onepassword-secrets.secretPaths.tailscaleAuthkey;
     extraUpFlags = [ 
       "--ssh"
     ];
   };
   
-  # Override tailscale autoconnect to use login server from secrets
+  # Override tailscale autoconnect to use login server from OpNix secrets
   systemd.services.tailscaled-autoconnect = {
     script = pkgs.lib.mkForce ''
       status=$(${pkgs.tailscale}/bin/tailscale status --json || true)
       if ! echo "$status" | ${pkgs.jq}/bin/jq -e '.BackendState == "Running"' > /dev/null 2>&1; then
         echo "Server needs authentication, sending auth key"
-        LOGIN_SERVER=$(cat ${config.age.secrets.tailscale-login-server.path})
-        ${pkgs.tailscale}/bin/tailscale up --auth-key "$(cat ${config.age.secrets.tailscale-authkey.path})" --ssh --login-server="$LOGIN_SERVER"
+        LOGIN_SERVER=$(cat ${config.services.onepassword-secrets.secretPaths.tailscaleLoginServer})
+        ${pkgs.tailscale}/bin/tailscale up --auth-key "$(cat ${config.services.onepassword-secrets.secretPaths.tailscaleAuthkey})" --ssh --login-server="$LOGIN_SERVER"
       fi
     '';
     serviceConfig.Type = pkgs.lib.mkForce "oneshot";

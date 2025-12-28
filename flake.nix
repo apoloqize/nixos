@@ -9,19 +9,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     
-    agenix = {
-      url = "github:ryantm/agenix";
+    opnix = {
+      url = "github:brizzbuzz/opnix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, deploy-rs, agenix, ... }: {
+  outputs = { self, nixpkgs, deploy-rs, opnix, ... }: {
     nixosConfigurations = {
       rmbp = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           ./hosts/rmbp/configuration.nix
-          agenix.nixosModules.default
+          opnix.nixosModules.default
         ];
       };
     };
