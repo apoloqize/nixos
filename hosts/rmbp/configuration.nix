@@ -111,16 +111,22 @@
   };
 
   # Open Webui
-
   services.open-webui = {
       enable = true;
       host = "0.0.0.0";
       environment = {
         WEBUI_AUTH = "False";
         OPENAI_API_BASE_URL = "https://openrouter.ai/api/v1";
-        OPENAI_API_KEY = "$(cat ${config.services.onepassword-secrets.secretPaths.openrouterApiKey})";
         TASK_MODEL_EXTERNAL = "google/gemini-3-flash-preview";
       };
+      # Use environmentFile to load the API key from OpNix secret
+      environmentFile = config.services.onepassword-secrets.secretPaths.openrouterApiKey;
+  };
+
+  # Ensure open-webui waits for OpNix secrets to be available
+  systemd.services.open-webui = {
+    after = [ "opnix-secrets.service" ];
+    wants = [ "opnix-secrets.service" ];
   };
 
   # List services that you want to enable:
